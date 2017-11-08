@@ -23,11 +23,22 @@ class ApiCartFuncTest extends TestCase
         parent::__construct($name, $data, $dataName);
     }
 
-    public function testApiCartAdd()
-    {
-        $qnt = $this->faker->numberBetween(1, 10);
-        $price = $this->faker->numberBetween(10, 1000);
 
+    /**
+     * Add product to cart test
+     * check if successfully added
+     *
+     * Add second time - 1 item
+     * check if quantity increments
+     *
+     * Delete from cart 1 item
+     * check if quantity decrements
+     *
+     */
+    public function testApiCart()
+    {
+        //create random product
+        $price = $this->faker->numberBetween(10, 1000);
         $name = $this->faker->colorName . ' ' . $this->faker->name('male');
         $descr = $this->faker->realText();
 
@@ -37,8 +48,11 @@ class ApiCartFuncTest extends TestCase
             'price' => $price,
         ]);
 
+        //random quantity
+        $qnt = $this->faker->numberBetween(1, 10);
 
-        $response = $this->post('/api/cart', [
+        //add first time
+        $this->post('/api/cart', [
             'product_id' => $product->id,
             'quantity' => $qnt
         ])
@@ -58,7 +72,49 @@ class ApiCartFuncTest extends TestCase
                 'sum' => $qnt * $price,
             ]);
 
+        //add second time
+        $this->post('/api/cart', [
+            'product_id' => $product->id,
+            'quantity' => 1
+        ])->assertStatus(200)
+            ->assertJsonMissing([
+                'error',
+            ]);
 
+
+        $this->get('/api/cart')
+            ->assertJsonFragment([
+                'products_count' => $qnt + 1,
+                'total_sum' => ($qnt + 1) * $price
+            ])
+            ->assertJsonFragment([
+                'id' => $product->id,
+                'quantity' => $qnt + 1,
+                'sum' => ($qnt + 1) * $price,
+            ]);
+
+
+        //delete from cart 1 product item
+        $this->delete('/api/cart/' . $product->id)
+            ->assertStatus(200)
+            ->assertJsonMissing([
+                'error',
+            ]);
+
+
+        $this->get('/api/cart')
+            ->assertJsonFragment([
+                'products_count' => $qnt,
+                'total_sum' => $qnt * $price
+            ])
+            ->assertJsonFragment([
+                'id' => $product->id,
+                'quantity' => $qnt,
+                'sum' => $qnt * $price,
+            ]);
+
+
+        //delete product after test
         $product->delete();
     }
 

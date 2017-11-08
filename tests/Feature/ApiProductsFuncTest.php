@@ -34,8 +34,9 @@ class ApiProductsFuncTest extends TestCase
      * check if it not exist
      *
      */
-    public function testApiProductsAdd()
+    public function testApiProducts()
     {
+        //random product properties
         $name = $this->faker->colorName . ' ' . $this->faker->name('male');
         $descr = $this->faker->realText();
         $price = $this->faker->numberBetween(10, 10000);
@@ -51,9 +52,11 @@ class ApiProductsFuncTest extends TestCase
             'id',
         ]);
 
+        //get product id from response
         $product = array_get($response->getOriginalContent(), 'data');
+        $this->assertTrue(is_object($product));
         $product_id = object_get($product, 'id', null);
-
+        $this->assertTrue($product_id > 0);
 
         //check exists
         $this->get('/api/products')
@@ -64,9 +67,10 @@ class ApiProductsFuncTest extends TestCase
                 'price' => $price,
             ]);
 
+        //generate new random product name
         $name_upd = $this->faker->colorName . ' ' . $this->faker->name('male');
 
-        //update
+        //update product (change name)
         $this->put('/api/products/' . $product_id, [
             'name' => $name_upd,
             'description' => $descr,
@@ -112,24 +116,23 @@ class ApiProductsFuncTest extends TestCase
      */
     public function testApiProductsAdd400name()
     {
+        //random product properties with not valid name
         $name = null;
         $descr = $this->faker->realText();
         $price = $this->faker->numberBetween(10, 10000);
 
-        $response = $this->post('/api/products', [
+        //try to create product
+        //want 400 error
+        $this->post('/api/products', [
             'description' => $descr,
             'price' => $price,
-        ]);
+        ])
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'error',
+            ]);
 
-
-        $test_resp = new TestResponse($response);
-
-        $test_resp->assertStatus(400);
-
-        $test_resp->assertJsonFragment([
-            'error',
-        ]);
-
+        //don't want success response
         $this->get('/api/products')
             ->assertJsonMissing([
                 'name' => $name,
@@ -147,24 +150,22 @@ class ApiProductsFuncTest extends TestCase
      */
     public function testApiProductsAdd400price()
     {
+        //random product properties without price
         $name = $this->faker->colorName . ' ' . $this->faker->name('male');
         $descr = $this->faker->realText();
 
-
-        $response = $this->post('/api/products', [
+        //try to create product
+        //want 400 error
+        $this->post('/api/products', [
             'name' => $name,
             'description' => $descr,
-        ]);
+        ])
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'error',
+            ]);
 
-
-        $test_resp = new TestResponse($response);
-
-        $test_resp->assertStatus(400);
-
-        $test_resp->assertJsonFragment([
-            'error',
-        ]);
-
+        //don't want success response
         $this->get('/api/products')
             ->assertJsonMissing([
                 'name' => $name,
