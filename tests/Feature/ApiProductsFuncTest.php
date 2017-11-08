@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use Faker\Factory;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
@@ -109,6 +110,71 @@ class ApiProductsFuncTest extends TestCase
 
 
     /**
+     * Add new product,
+     * check if successfully added
+     *
+     * View it
+     *
+     * Delete it
+     *
+     * Try to view
+     * check got error
+     *
+     * Try to update it
+     * check got error
+     *
+     * Try to delete it
+     * check got error
+     *
+     */
+    public function testApiProductsAddView()
+    {
+        $product = factory(Product::class)->create();
+
+
+        //check exists
+        $this->get('/api/products/' . $product->id)
+            ->assertJson(['data' => array()])
+            ->assertJsonFragment([
+                'name' => $product->name,
+                'description' => $product->description,
+                'price' => $product->price,
+            ]);
+
+        //delete
+        $this->delete('/api/products/' . $product->id)
+            ->assertJsonMissing([
+                'error',
+            ]);
+
+
+        //can't view non-existent product
+        $this->get('/api/products/' . $product->id)
+            ->assertJsonFragment(['error'])
+            ->assertStatus(404);
+
+        //generate new random product name
+        $name_upd = $this->faker->colorName . ' ' . $this->faker->name('male');
+
+        //cat't update  non-existent product
+        $this->put('/api/products/' . $product->id, [
+            'name' => $name_upd,
+            'description' => $product->description,
+            'price' => $product->price,
+        ])->assertJsonFragment(['error'])
+            ->assertStatus(404);
+
+
+        //can't delete non-existent product
+        $this->delete('/api/products/' . $product->id)
+            ->assertJsonFragment(['error'])
+            ->assertStatus(404);
+
+
+    }
+
+
+    /**
      * Add new buggy product,
      * check if not successfully added
      * check if it not exist
@@ -150,15 +216,40 @@ class ApiProductsFuncTest extends TestCase
      */
     public function testApiProductsAdd400price()
     {
-        //random product properties without price
-        $name = $this->faker->colorName . ' ' . $this->faker->name('male');
+        $product = factory(Product::class)->create();
+
+
+        //generate new random product name
+        $name_upd = $this->faker->colorName . ' ' . $this->faker->name('male');
+
+        //update product (change name)
+        $this->put('/api/products/' . $product->id, [
+            'name' => $name_upd,
+            'description' => $product->description,
+        ])
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'error',
+            ]);
+    }
+
+
+    /**
+     * Update product without price
+     *
+     */
+    public function testApiProductsUpdate400price()
+    {
+        //random product properties with not valid name
+        $name = null;
         $descr = $this->faker->realText();
+        $price = $this->faker->numberBetween(10, 10000);
 
         //try to create product
         //want 400 error
         $this->post('/api/products', [
-            'name' => $name,
             'description' => $descr,
+            'price' => $price,
         ])
             ->assertStatus(400)
             ->assertJsonFragment([
@@ -170,6 +261,7 @@ class ApiProductsFuncTest extends TestCase
             ->assertJsonMissing([
                 'name' => $name,
                 'description' => $descr,
+                'price' => $price,
             ]);
     }
 

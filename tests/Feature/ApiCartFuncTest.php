@@ -39,14 +39,7 @@ class ApiCartFuncTest extends TestCase
     {
         //create random product
         $price = $this->faker->numberBetween(10, 1000);
-        $name = $this->faker->colorName . ' ' . $this->faker->name('male');
-        $descr = $this->faker->realText();
-
-        $product = Product::create([
-            'name' => $name,
-            'description' => $descr,
-            'price' => $price,
-        ]);
+        $product = factory(Product::class )->create(['price' => $price]);
 
         //random quantity
         $qnt = $this->faker->numberBetween(1, 10);
