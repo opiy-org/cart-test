@@ -1,19 +1,18 @@
 <?php
 
 use Faker\Factory;
-use Faker\Generator as Faker;
 
-$factory->define(\App\Models\Product::class, function (Faker $faker) {
+$factory->define(\App\Models\Product::class, function () {
     static $price;
 
-    $this->faker = Factory::create('ru_RU');
+    $faker = Factory::create('ru_RU');
 
-    $name = $this->faker->colorName . ' ' . $this->faker->name('male');
-    $descr = $this->faker->realText();
+    $name = $faker->colorName . ' ' . $faker->name('male');
+    $descr = $faker->realText();
 
     return [
         'name' => $name,
         'description' => $descr,
-        'price' => $price? $price:$this->faker->numberBetween(10, 1000),
+        'price' => $price ? $price : $faker->numberBetween(10, 1000),
     ];
 });

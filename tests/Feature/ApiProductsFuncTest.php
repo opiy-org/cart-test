@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Product;
 use Faker\Factory;
-use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
 
 class ApiProductsFuncTest extends TestCase

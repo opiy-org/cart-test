@@ -3,12 +3,8 @@
 namespace App\Exceptions;
 
 use App\Services\JResponseService;
-use Illuminate\Validation\ValidationException;
 use Exception;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Prophecy\Exception\Doubler\MethodNotFoundException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

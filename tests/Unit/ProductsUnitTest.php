@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Models\Product;
-use Faker\Factory;
 use Tests\TestCase;
 
 class ProductsUnitTest extends TestCase

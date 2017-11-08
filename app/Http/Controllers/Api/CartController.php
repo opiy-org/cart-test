@@ -17,9 +17,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 /**
+ * Class CartController
+ * View cart, add/delete products in cart
+ *
+ *
  * @resource Cart
  *
- * View cart, add/delete products in cart
+ * @package App\Http\Controllers\Api
  */
 class CartController
 {
@@ -30,10 +34,11 @@ class CartController
     }
 
     /**
-     * index
+     *  index
      *
      * Cart content
      *
+     * @param Request $request
      * @return JsonResponse
      */
     public function index(Request $request): JsonResponse
@@ -65,7 +70,7 @@ class CartController
 
 
     /**
-     * add
+     *  add
      *
      * Add product to cart
      *
@@ -105,11 +110,12 @@ class CartController
 
 
     /**
-     * delete
+     *  delete
      *
      * Remove (or decrement quantity) product from cart
      *
      * @param int $id
+     * @param Request $request
      * @return JsonResponse
      */
     public function delete(int $id, Request $request): JsonResponse

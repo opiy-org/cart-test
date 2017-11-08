@@ -16,9 +16,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 /**
+ * Class ProductsController
+ * List of available products, view product, CRUD
+ *
+ *
  * @resource Products
  *
- * List of available products, view product, CRUD
+ * @package App\Http\Controllers\Api
  */
 class ProductsController
 {
@@ -30,7 +34,7 @@ class ProductsController
 
 
     /**
-     * index
+     *  index
      *
      * Products list
      *
@@ -46,7 +50,7 @@ class ProductsController
 
 
     /**
-     * view
+     *  view
      *
      * View product by id
      *
@@ -70,7 +74,7 @@ class ProductsController
 
 
     /**
-     * create
+     *  create
      *
      * Create new product
      * request must contain name,price and optionally description
@@ -105,7 +109,7 @@ class ProductsController
     }
 
     /**
-     * update
+     *  update
      *
      * Update product by id
      * request must contain name,price and optionally description
@@ -153,7 +157,7 @@ class ProductsController
 
 
     /**
-     * delete
+     *  delete
      *
      * Delete product by id
      *
