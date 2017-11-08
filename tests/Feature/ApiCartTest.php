@@ -31,7 +31,7 @@ class ApiCartTest extends TestCase
     {
         //create random product
         $price = $this->faker->numberBetween(10, 1000);
-        $product = factory(Product::class )->create(['price' => $price]);
+        $product = factory(Product::class)->create(['price' => $price]);
 
         //random quantity
         $qnt = $this->faker->numberBetween(1, 10);
@@ -64,6 +64,31 @@ class ApiCartTest extends TestCase
 
 
     /**
+     * Add non-existent product to cart test
+     * check got error
+     */
+    public function testApiCartAddNE()
+    {
+        //create random product
+        $product = factory(Product::class)->create();
+
+        $product->delete();
+
+        //random quantity
+        $qnt = $this->faker->numberBetween(1, 10);
+
+        //add
+        $this->post('/api/cart', [
+            'product_id' => $product->id,
+            'quantity' => $qnt
+        ])->assertStatus(400)
+            ->assertJsonFragment([
+                'error',
+            ]);
+    }
+
+
+    /**
      * Add product to cart test
      * Add second time - 1 item
      * check if quantity increments
@@ -73,7 +98,7 @@ class ApiCartTest extends TestCase
     {
         //create random product
         $price = $this->faker->numberBetween(10, 1000);
-        $product = factory(Product::class )->create(['price' => $price]);
+        $product = factory(Product::class)->create(['price' => $price]);
 
         //random quantity
         $qnt = $this->faker->numberBetween(1, 10);
@@ -122,7 +147,7 @@ class ApiCartTest extends TestCase
     {
         //create random product
         $price = $this->faker->numberBetween(10, 1000);
-        $product = factory(Product::class )->create(['price' => $price]);
+        $product = factory(Product::class)->create(['price' => $price]);
 
         //random quantity
         $qnt = $this->faker->numberBetween(1, 10);
@@ -161,6 +186,81 @@ class ApiCartTest extends TestCase
 
         //delete product after test
         $product->delete();
+    }
+
+
+    /**
+     * Add 1 item product to cart test
+     * Delete from cart 1 item
+     * check if cart empty
+     *
+     */
+    public function testApiCartDelete()
+    {
+        //create random product
+        $price = $this->faker->numberBetween(10, 1000);
+        $product = factory(Product::class)->create(['price' => $price]);
+
+        //add
+        $this->post('/api/cart', [
+            'product_id' => $product->id,
+            'quantity' => 1
+        ]);
+
+        //delete from cart 1 product item
+        $this->delete('/api/cart/' . $product->id)
+            ->assertStatus(200)
+            ->assertJsonMissing([
+                'error',
+            ]);
+
+
+        $this->get('/api/cart')
+            ->assertJsonFragment([
+                'products_count' => 0,
+                'total_sum' => 0
+            ])
+            ->assertJsonMissing([
+                'id' => $product->id,
+            ]);
+
+        //delete product after test
+        $product->delete();
+    }
+
+
+    /**
+     * Delete non-existent product from cart
+     *
+     */
+    public function testApiCartDeleteNE()
+    {
+
+        //delete from cart 1 product item
+        $this->delete('/api/cart/' . rand(100, 300))
+            ->assertStatus(400)
+            ->assertJsonFragment([
+                'error',
+            ]);
+    }
+
+
+    /**
+     * Delete product from cart, wich not in cart
+     *
+     */
+    public function testApiCartDeleteNotAdded()
+    {
+        //create random product
+        $product = factory(Product::class)->create();
+
+
+        //delete from cart 1 product item
+        $this->delete('/api/cart/' . $product->id)
+            ->assertStatus(404)
+            ->assertJsonFragment([
+                'error',
+            ]);
     }
 
 }

@@ -25,16 +25,8 @@ class ApiProductsTest extends TestCase
     /**
      * Add new product,
      * check if successfully added
-     * check if it exist
-     *
-     * Update it
-     * check if successfully changed
-     *
-     * Delete it
-     * check if it not exist
-     *
      */
-    public function testApiProducts()
+    public function testApiProductsAdd()
     {
         //random product properties
         $name = $this->faker->colorName . ' ' . $this->faker->name('male');
@@ -46,20 +38,41 @@ class ApiProductsTest extends TestCase
             'name' => $name,
             'description' => $descr,
             'price' => $price,
-        ])->assertJsonMissing([
-            'error',
-        ])->assertJsonFragment([
-            'id',
-        ]);
+        ])
+            ->assertStatus(200)
+            ->assertJsonMissing([
+                'error',
+            ])->assertJsonFragment([
+                'id',
+            ]);
 
-        //get product id from response
+        //get product from response
         $product = array_get($response->getOriginalContent(), 'data');
         $this->assertTrue(is_object($product));
-        $product_id = object_get($product, 'id', null);
-        $this->assertTrue($product_id > 0);
+        $product->delete();
+    }
+
+
+    /**
+     * Find product in index
+     */
+    public function testApiProductsIndex()
+    {
+        //random product properties
+        $name = $this->faker->colorName . ' ' . $this->faker->name('male');
+        $descr = $this->faker->realText();
+        $price = $this->faker->numberBetween(10, 10000);
+
+        //create product
+        $product = factory(Product::class)->create([
+            'name' => $name,
+            'description' => $descr,
+            'price' => $price,
+        ]);
 
         //check exists
         $this->get('/api/products')
+            ->assertStatus(200)
             ->assertJson(['data' => array()])
             ->assertJsonFragment([
                 'name' => $name,
@@ -67,30 +80,93 @@ class ApiProductsTest extends TestCase
                 'price' => $price,
             ]);
 
-        //generate new random product name
-        $name_upd = $this->faker->colorName . ' ' . $this->faker->name('male');
+        $product->delete();
+    }
 
-        //update product (change name)
-        $this->put('/api/products/' . $product_id, [
-            'name' => $name_upd,
+
+    /**
+     * view product
+     */
+    public function testApiProductsView()
+    {
+        //random product properties
+        $name = $this->faker->colorName . ' ' . $this->faker->name('male');
+        $descr = $this->faker->realText();
+        $price = $this->faker->numberBetween(10, 10000);
+
+        //create product
+        $product = factory(Product::class)->create([
+            'name' => $name,
             'description' => $descr,
             'price' => $price,
-        ])->assertJsonMissing([
-            'error',
         ]);
 
-        //check changed
-        $this->get('/api/products')
+        //check exists
+        $this->get('/api/products/' . $product->id)
+            ->assertStatus(200)
+            ->assertJson(['data' => array()])
             ->assertJsonFragment([
-                'id' => $product_id,
-                'name' => $name_upd,
+                'name' => $name,
                 'description' => $descr,
                 'price' => $price,
             ]);
 
+        $product->delete();
+    }
+
+
+    /**
+     * Update product
+     * check if successfully changed
+     *
+     */
+    public function testApiProductsUpdate()
+    {
+        //create product
+        $product = factory(Product::class)->create();
+
+        //generate new random product name
+        $name = $this->faker->colorName . ' ' . $this->faker->name('female');
+        $descr = $this->faker->realText();
+        $price = $this->faker->numberBetween(10, 10000);
+
+        //update product (change name)
+        $this->put('/api/products/' . $product->id, [
+            'name' => $name,
+            'description' => $descr,
+            'price' => $price,
+        ])
+            ->assertStatus(200)
+            ->assertJsonMissing([
+                'error',
+            ]);
+
+        //check changed
+        $this->get('/api/products')
+            ->assertJsonFragment([
+                'id' => $product->id,
+                'name' => $name,
+                'description' => $descr,
+                'price' => $price,
+            ]);
+
+        $product->delete();
+    }
+
+
+    /**
+     * Delete product
+     * check if it not exist
+     *
+     */
+    public function testApiProductsDelete()
+    {
+        //create product
+        $product = factory(Product::class)->create();
 
         //delete
-        $this->delete('/api/products/' . $product_id)
+        $this->delete('/api/products/' . $product->id)
+            ->assertStatus(200)
             ->assertJsonMissing([
                 'error',
             ]);
@@ -98,59 +174,39 @@ class ApiProductsTest extends TestCase
         //check not exists
         $this->get('/api/products')
             ->assertJsonMissing([
-                'id' => $product_id,
-                'name' => $name_upd,
-                'description' => $descr,
-                'price' => $price,
-            ]);
-
-
-    }
-
-
-    /**
-     * Add new product,
-     * check if successfully added
-     *
-     * View it
-     *
-     * Delete it
-     *
-     * Try to view
-     * check got error
-     *
-     * Try to update it
-     * check got error
-     *
-     * Try to delete it
-     * check got error
-     *
-     */
-    public function testApiProductsAddView()
-    {
-        $product = factory(Product::class)->create();
-
-
-        //check exists
-        $this->get('/api/products/' . $product->id)
-            ->assertJson(['data' => array()])
-            ->assertJsonFragment([
+                'id' => $product->id,
                 'name' => $product->name,
                 'description' => $product->description,
                 'price' => $product->price,
             ]);
+    }
 
-        //delete
-        $this->delete('/api/products/' . $product->id)
-            ->assertJsonMissing([
-                'error',
-            ]);
 
+    /**
+     * Try to view non-existent product
+     * check got error
+     */
+    public function testApiProductsViewNE()
+    {
+        $product = factory(Product::class)->create();
+        $product->delete();
 
         //can't view non-existent product
         $this->get('/api/products/' . $product->id)
             ->assertJsonFragment(['error'])
             ->assertStatus(404);
+
+    }
+
+    /**
+     * Try to update non-existent product
+     * check got error
+     *
+     */
+    public function testApiProductsUpdateNE()
+    {
+        $product = factory(Product::class)->create();
+        $product->delete();
 
         //generate new random product name
         $name_upd = $this->faker->colorName . ' ' . $this->faker->name('male');
@@ -163,20 +219,31 @@ class ApiProductsTest extends TestCase
         ])->assertJsonFragment(['error'])
             ->assertStatus(404);
 
+    }
+
+
+    /**
+     * Try to delete non-existent product
+     * check got error
+     *
+     */
+    public function testApiProductsDeleteNE()
+    {
+        $product = factory(Product::class)->create();
+        $product->delete();
+
 
         //can't delete non-existent product
         $this->delete('/api/products/' . $product->id)
             ->assertJsonFragment(['error'])
             ->assertStatus(404);
-
-
     }
+
 
 
     /**
      * Add new buggy product,
      * check if not successfully added
-     * check if it not exist
      *
      */
     public function testApiProductsAdd400name()
@@ -197,13 +264,6 @@ class ApiProductsTest extends TestCase
                 'error',
             ]);
 
-        //don't want success response
-        $this->get('/api/products')
-            ->assertJsonMissing([
-                'name' => $name,
-                'description' => $descr,
-                'price' => $price,
-            ]);
     }
 
 
@@ -214,7 +274,6 @@ class ApiProductsTest extends TestCase
     public function testApiProductsUpdate400price()
     {
         $product = factory(Product::class)->create();
-
 
         //generate new random product name
         $name_upd = $this->faker->colorName . ' ' . $this->faker->name('male');
@@ -231,8 +290,6 @@ class ApiProductsTest extends TestCase
 
         $product->delete();
     }
-
-
 
 
 }

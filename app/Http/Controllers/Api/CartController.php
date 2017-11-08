@@ -133,9 +133,9 @@ class CartController
         $current_qnt = array_get($cart_items, $id, null);
         if ($current_qnt === null) {
             return JResponseService::error([
-                'type' => 'invalid_param_error',
+                'type' => 'invalid_request_error',
                 'message' => 'No such product in the cart',
-            ], 400);
+            ], 404);
         }
 
 
