@@ -11,6 +11,10 @@ abstract class TestCase extends BaseTestCase
     public function __construct($name = null, array $data = [], $dataName = '')
     {
 
+        if (!class_exists('PHPUnit_Framework_Constraint_Not')) {
+            class_alias(\PHPUnit\Framework\Constraint\LogicalNot::class, 'PHPUnit_Framework_Constraint_Not');
+        }
+
         if (!class_exists('PHPUnit_Framework_Constraint')) {
             class_alias(\PHPUnit\Framework\Constraint\Constraint::class, 'PHPUnit_Framework_Constraint');
         }

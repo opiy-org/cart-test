@@ -28,11 +28,6 @@ use Illuminate\Support\Facades\Validator;
 class CartController
 {
 
-    public function rules()
-    {
-        return CartReference::RULES;
-    }
-
     /**
      *  index
      *
@@ -105,7 +100,8 @@ class CartController
 
         $cart->setItems($cart_items);
 
-        return $this->index($request);
+        return JResponseService::empty();
+       // return $this->index($request);
     }
 
 
@@ -152,7 +148,8 @@ class CartController
 
         $cart->setItems($cart_items);
 
-        return $this->index($request);
+        return JResponseService::empty();
+        //return $this->index($request);
     }
 
 

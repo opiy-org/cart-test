@@ -27,12 +27,6 @@ use Illuminate\Support\Facades\Validator;
 class ProductsController
 {
 
-    public function rules()
-    {
-        return ProductReference::RULES;
-    }
-
-
     /**
      *  index
      *

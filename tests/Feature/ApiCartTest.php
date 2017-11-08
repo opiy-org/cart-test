@@ -6,7 +6,7 @@ use App\Models\Product;
 use Faker\Factory;
 use Tests\TestCase;
 
-class ApiCartFuncTest extends TestCase
+class ApiCartTest extends TestCase
 {
 
 
@@ -26,15 +26,8 @@ class ApiCartFuncTest extends TestCase
     /**
      * Add product to cart test
      * check if successfully added
-     *
-     * Add second time - 1 item
-     * check if quantity increments
-     *
-     * Delete from cart 1 item
-     * check if quantity decrements
-     *
      */
-    public function testApiCart()
+    public function testApiCartAdd()
     {
         //create random product
         $price = $this->faker->numberBetween(10, 1000);
@@ -43,7 +36,7 @@ class ApiCartFuncTest extends TestCase
         //random quantity
         $qnt = $this->faker->numberBetween(1, 10);
 
-        //add first time
+        //add
         $this->post('/api/cart', [
             'product_id' => $product->id,
             'quantity' => $qnt
@@ -63,6 +56,34 @@ class ApiCartFuncTest extends TestCase
                 'quantity' => $qnt,
                 'sum' => $qnt * $price,
             ]);
+
+
+        //delete product after test
+        $product->delete();
+    }
+
+
+    /**
+     * Add product to cart test
+     * Add second time - 1 item
+     * check if quantity increments
+     *
+     */
+    public function testApiCartAddTwice()
+    {
+        //create random product
+        $price = $this->faker->numberBetween(10, 1000);
+        $product = factory(Product::class )->create(['price' => $price]);
+
+        //random quantity
+        $qnt = $this->faker->numberBetween(1, 10);
+
+        //add first time
+        $this->post('/api/cart', [
+            'product_id' => $product->id,
+            'quantity' => $qnt
+        ]);
+
 
         //add second time
         $this->post('/api/cart', [
@@ -85,6 +106,38 @@ class ApiCartFuncTest extends TestCase
                 'sum' => ($qnt + 1) * $price,
             ]);
 
+        //delete product after test
+        $product->delete();
+    }
+
+    /**
+     * Add product to cart test
+     * Add second time - 1 item
+     *
+     * Delete from cart 1 item
+     * check if quantity decrements
+     *
+     */
+    public function testApiCartDecrement()
+    {
+        //create random product
+        $price = $this->faker->numberBetween(10, 1000);
+        $product = factory(Product::class )->create(['price' => $price]);
+
+        //random quantity
+        $qnt = $this->faker->numberBetween(1, 10);
+
+        //add first time
+        $this->post('/api/cart', [
+            'product_id' => $product->id,
+            'quantity' => $qnt
+        ]);
+
+        //add second time
+        $this->post('/api/cart', [
+            'product_id' => $product->id,
+            'quantity' => 1
+        ]);
 
         //delete from cart 1 product item
         $this->delete('/api/cart/' . $product->id)
@@ -109,6 +162,5 @@ class ApiCartFuncTest extends TestCase
         //delete product after test
         $product->delete();
     }
-
 
 }

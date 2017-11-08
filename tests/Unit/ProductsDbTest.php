@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use App\Models\Product;
 use Tests\TestCase;
 
-class ProductsUnitTest extends TestCase
+class ProductsDbTest extends TestCase
 {
 
     /**
@@ -24,6 +24,22 @@ class ProductsUnitTest extends TestCase
         ]);
 
         $product->delete();
+
+    }
+
+    /**
+     * Test not exist product to db
+     */
+    public function testProductsAddDeleteDb()
+    {
+        // Create a single App\User instance...
+        $product = factory(Product::class)->create();
+
+        $product->delete();
+
+        $this->assertDatabaseMissing('products', [
+            'id' => $product->id,
+        ]);
     }
 
 }

@@ -6,7 +6,7 @@ use App\Models\Product;
 use Faker\Factory;
 use Tests\TestCase;
 
-class ApiProductsFuncTest extends TestCase
+class ApiProductsTest extends TestCase
 {
 
     /**
@@ -208,12 +208,10 @@ class ApiProductsFuncTest extends TestCase
 
 
     /**
-     * Add new buggy product,
-     * check if not successfully added
-     * check if it not exist
+     * Check can't update product with not valid data
      *
      */
-    public function testApiProductsAdd400price()
+    public function testApiProductsUpdate400price()
     {
         $product = factory(Product::class)->create();
 
@@ -230,39 +228,11 @@ class ApiProductsFuncTest extends TestCase
             ->assertJsonFragment([
                 'error',
             ]);
+
+        $product->delete();
     }
 
 
-    /**
-     * Update product without price
-     *
-     */
-    public function testApiProductsUpdate400price()
-    {
-        //random product properties with not valid name
-        $name = null;
-        $descr = $this->faker->realText();
-        $price = $this->faker->numberBetween(10, 10000);
-
-        //try to create product
-        //want 400 error
-        $this->post('/api/products', [
-            'description' => $descr,
-            'price' => $price,
-        ])
-            ->assertStatus(400)
-            ->assertJsonFragment([
-                'error',
-            ]);
-
-        //don't want success response
-        $this->get('/api/products')
-            ->assertJsonMissing([
-                'name' => $name,
-                'description' => $descr,
-                'price' => $price,
-            ]);
-    }
 
 
 }

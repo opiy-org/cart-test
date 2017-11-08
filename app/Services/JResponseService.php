@@ -15,6 +15,18 @@ use Illuminate\Validation\Validator;
 class JResponseService
 {
 
+
+    /**
+     *  Return empty json
+     *
+     * @return JsonResponse
+     */
+    public static function empty(): JsonResponse
+    {
+        return Response::json(null, 200);
+    }
+
+
     /**
      *  Return json with data and 200 http code by default
      *
@@ -28,7 +40,7 @@ class JResponseService
     {
         return Response::json([
             'data' => $data,
-//            'session'=>\Illuminate\Support\Facades\Session::all(),
+//          'session'=>\Illuminate\Support\Facades\Session::all(),
         ], $code, $headers, $options);
     }
 
@@ -65,10 +77,10 @@ class JResponseService
         foreach ($messages as $attr => $attr_errors) {
             foreach ($attr_errors as $attr_error) {
 
-                $code = implode(',',array_flatten($rules));
+                $code = implode(',', array_flatten($rules));
                 foreach ($rules[$attr] as $rule) {
-                    $ruletmp=str_replace('min:','',$rule);
-                    $ruletmp=str_replace('max:','',$ruletmp);
+                    $ruletmp = str_replace('min:', '', $rule);
+                    $ruletmp = str_replace('max:', '', $ruletmp);
                     if (strpos($attr_error, $ruletmp) != false) {
                         $code = $rule;
                     }

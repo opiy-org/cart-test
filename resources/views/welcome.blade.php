@@ -67,8 +67,10 @@
 <body>
 <div class="flex-center position-ref full-height">
     <div>
-        <h1><?php \Illuminate\Support\Facades\Config::get('app.name'); ?></h1>
-        @if (env('APP_ENV') === 'local' || env('APP_ENV') === 'staging')
+        <h1>{{ \Illuminate\Support\Facades\Config::get('app.name') }}</h1>
+
+
+        @if (\Illuminate\Support\Facades\Config::get('app.env') == 'local' || \Illuminate\Support\Facades\Config::get('app.env') == 'staging')
         <div class="flex-center">
             <a href="/tests/index.html">Tests</a> | <a href="/docs/index.html">Docs</a>
         </div>
