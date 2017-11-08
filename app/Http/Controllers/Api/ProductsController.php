@@ -47,7 +47,7 @@ class ProductsController
         if (!$item) {
             return JResponseService::error([
                 'type' => 'item_not_found',
-                'message' => 'product id: ' . $id . ' not found',
+                'message' => 'product with id: ' . $id . ' not found',
             ]);
         }
 
@@ -64,12 +64,13 @@ class ProductsController
      */
     public function create(Request $request): JsonResponse
     {
-        /** @var Validator $validator */
-        $validator = Validator::make($request->all(), ProductReference::RULES);
+        $validator = Validator::make(
+            $request->all(),
+            ProductReference::RULES
+        );
         if ($validator->fails()) {
             return JResponseService::validation_errors($validator);
         }
-
 
         try {
             $item = Product::create([
@@ -79,10 +80,9 @@ class ProductsController
             ]);
         } catch (\Exception $exception) {
             return JResponseService::error([
-                'type' => 'invalid_param_error',
-                'message' => 'Invalid data parameters',
-                'params' => $exception->getMessage(),
-            ],400);
+                'type' => 'something_goes_wrong',
+                'message' => $exception->getMessage(),
+            ],500);
         }
 
         return JResponseService::data($item);
@@ -98,8 +98,10 @@ class ProductsController
      */
     public function update(int $id, Request $request): JsonResponse
     {
-        /** @var Validator $validator */
-        $validator = Validator::make($request->all(), ProductReference::RULES);
+        $validator = Validator::make(
+            $request->all(),
+            ProductReference::RULES
+        );
         if ($validator->fails()) {
             return JResponseService::validation_errors($validator);
         }
@@ -111,7 +113,7 @@ class ProductsController
         if (!$item) {
             return JResponseService::error([
                 'type' => 'item_not_found',
-                'message' => 'product id: ' . $id . ' not found',
+                'message' => 'product with id: ' . $id . ' not found',
             ]);
         }
 
@@ -123,10 +125,9 @@ class ProductsController
             ]);
         } catch (\Exception $exception) {
             return JResponseService::error([
-                'type' => 'invalid_param_error',
-                'message' => 'Invalid data parameters',
-                'params' => $exception->getMessage(),
-            ],400);
+                'type' => 'something_goes_wrong',
+                'message' => $exception->getMessage(),
+            ],500);
         }
 
         return JResponseService::data($item);
@@ -147,7 +148,7 @@ class ProductsController
         if (!$item) {
             return JResponseService::error([
                 'type' => 'item_not_found',
-                'message' => 'product id: ' . $id . ' not found',
+                'message' => 'product with id: ' . $id . ' not found',
             ]);
         }
 
@@ -155,10 +156,9 @@ class ProductsController
             $item->delete();
         } catch (\Exception $exception) {
             return JResponseService::error([
-                'type' => 'invalid_param_error',
-                'message' => 'Invalid data parameters',
-                'params' => $exception->getMessage(),
-            ],400);
+                'type' => 'something_goes_wrong',
+                'message' => $exception->getMessage(),
+            ],500);
         }
 
         return JResponseService::data(null);

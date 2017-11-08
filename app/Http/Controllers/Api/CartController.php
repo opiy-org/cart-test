@@ -19,7 +19,6 @@ use Illuminate\Support\Facades\Validator;
 class CartController
 {
 
-
     /**
      * Cart content
      *
@@ -27,7 +26,7 @@ class CartController
      */
     public function index(Request $request): JsonResponse
     {
-        $token=$request->attributes->get('token');
+        $token = $request->attributes->get('token');
 
         /** @var Cart $cart */
         $cart = new Cart($token);
@@ -39,7 +38,7 @@ class CartController
             $cart_items->push([
                 'id' => $product_id,
                 'quantity' => $quantity,
-                'sum' => $product->price*$quantity,
+                'sum' => $product->price * $quantity,
             ]);
         }
 
@@ -59,10 +58,12 @@ class CartController
      */
     public function add(Request $request): JsonResponse
     {
-        $token=$request->attributes->get('token');
+        $token = $request->attributes->get('token');
 
-        /** @var Validator $validator */
-        $validator = Validator::make($request->all(), CartReference::RULES);
+        $validator = Validator::make(
+            $request->all(),
+            CartReference::RULES
+        );
         if ($validator->fails()) {
             return JResponseService::validation_errors($validator);
         }
@@ -83,7 +84,7 @@ class CartController
 
         $cart->setItems($cart_items);
 
-       return $this->index($request);
+        return $this->index($request);
     }
 
 
@@ -93,9 +94,12 @@ class CartController
      */
     public function delete(int $id, Request $request): JsonResponse
     {
-        $token=$request->attributes->get('token');
+        $token = $request->attributes->get('token');
 
-        $validator = Validator::make(['product_id' => $id], ['product_id' => 'integer|required|exists:products,id']);
+        $validator = Validator::make(
+            ['product_id' => $id],
+            ['product_id' => 'integer|required|exists:products,id']
+        );
         if ($validator->fails()) {
             return JResponseService::validation_errors($validator);
         }
@@ -109,7 +113,7 @@ class CartController
             return JResponseService::error([
                 'type' => 'invalid_param_error',
                 'message' => 'No such product in the cart',
-            ]);
+            ], 400);
         }
 
 
