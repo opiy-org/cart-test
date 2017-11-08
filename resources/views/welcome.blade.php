@@ -68,9 +68,11 @@
 <div class="flex-center position-ref full-height">
     <div>
         <h1><?php echo \Config::get('app.name'); ?></h1>
+        @if (env('APP_ENV') === 'local' || env('APP_ENV') === 'staging')
         <div class="flex-center">
             <a href="/tests/index.html">Tests</a> | <a href="/docs/index.html">Docs</a>
         </div>
+        @endif
     </div>
 </div>
 

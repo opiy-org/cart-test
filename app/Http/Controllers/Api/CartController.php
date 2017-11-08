@@ -16,10 +16,22 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @resource Cart
+ *
+ * View cart, add/delete products in cart
+ */
 class CartController
 {
 
+    public function rules()
+    {
+        return CartReference::RULES;
+    }
+
     /**
+     * index
+     *
      * Cart content
      *
      * @return JsonResponse
@@ -53,6 +65,10 @@ class CartController
 
 
     /**
+     * add
+     *
+     * Add product to cart
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -89,6 +105,10 @@ class CartController
 
 
     /**
+     * delete
+     *
+     * Remove (or decrement quantity) product from cart
+     *
      * @param int $id
      * @return JsonResponse
      */

@@ -5,14 +5,8 @@
 1. `composer install`
 2. `cp .env.example .env`
 3. `vi .env `  (or any editor you prefer)
-4. `php artisan key:generate`
-5. `php artisan migrate`
+4. `./site_deploy.sh`
+5. `./site_deploy_dev.sh`  *
 
+*optional, if APP_ENV=local  
 
-
-
-
-#### Testing 
-```
-./phpunit
-```

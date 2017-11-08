@@ -15,11 +15,23 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @resource Products
+ *
+ * List of available products, view product, CRUD
+ */
 class ProductsController
 {
 
+    public function rules()
+    {
+        return ProductReference::RULES;
+    }
+
 
     /**
+     * index
+     *
      * Products list
      *
      * @return JsonResponse
@@ -34,7 +46,9 @@ class ProductsController
 
 
     /**
-     *  View product by id
+     * view
+     *
+     * View product by id
      *
      * @param int $id
      * @return JsonResponse
@@ -56,8 +70,10 @@ class ProductsController
 
 
     /**
-     *  Create new product
-     *  request must contain name,price and optionally description
+     * create
+     *
+     * Create new product
+     * request must contain name,price and optionally description
      *
      * @param Request $request
      * @return JsonResponse
@@ -89,8 +105,10 @@ class ProductsController
     }
 
     /**
-     *  Update product by id
-     *  request must contain name,price and optionally description
+     * update
+     *
+     * Update product by id
+     * request must contain name,price and optionally description
      *
      * @param int $id
      * @param Request $request
@@ -135,7 +153,9 @@ class ProductsController
 
 
     /**
-     *  Delete product by id
+     * delete
+     *
+     * Delete product by id
      *
      * @param int $id
      * @return JsonResponse
