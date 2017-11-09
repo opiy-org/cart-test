@@ -2,11 +2,13 @@
 
 #### Installation:
 
-1. `composer install`
-2. `cp .env.example .env`
-3. `vi .env `  (or any other editor you prefer)
-4. `./site_deploy.sh`
-5. `./site_deploy_dev.sh`  *
+1. `cd /var/www/html` (or your web root folder)
+2. `git clone https://github.com/opiy-org/cart-test.git .`
+3. `composer install`
+4. `cp .env.example .env`
+5. `vi .env `  (or any other editor you prefer)
+6. `./site_deploy.sh`
+7. `./site_deploy_dev.sh`  *
 
 
 
