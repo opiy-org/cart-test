@@ -8,5 +8,7 @@
 4. `./site_deploy.sh`
 5. `./site_deploy_dev.sh`  *
 
-*optional, if APP_ENV=local  
+
+
+*optional, if APP_ENV=local or staging (will generate ide heplers, run tests, generate api docs)  
 
