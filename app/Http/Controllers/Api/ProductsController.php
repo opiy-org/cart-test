@@ -48,6 +48,9 @@ class ProductsController
      *
      * View product by id
      *
+     * Params:
+     * - id    required,int   (product_id)
+     *
      * @param int $id
      * @return JsonResponse
      */
@@ -72,6 +75,11 @@ class ProductsController
      *
      * Create new product
      * request must contain name,price and optionally description
+     *
+     * Params:
+     * - name   required,string
+     * - description    text
+     * - price  required,int
      *
      * @param Request $request
      * @return JsonResponse
@@ -107,6 +115,13 @@ class ProductsController
      *
      * Update product by id
      * request must contain name,price and optionally description
+     *
+     * Params:
+     * - id    required,int   (product_id)
+     *
+     * - name   required,string
+     * - description    text
+     * - price  required,int
      *
      * @param int $id
      * @param Request $request
@@ -154,6 +169,9 @@ class ProductsController
      *  delete
      *
      * Delete product by id
+     *
+     * Params:
+     * - id    required,int   (product_id)
      *
      * @param int $id
      * @return JsonResponse

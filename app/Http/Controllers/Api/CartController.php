@@ -69,6 +69,10 @@ class CartController
      *
      * Add product to cart
      *
+     * Params:
+     * - product_id    required,int
+     * - quantity    required,int,min:1,max:10
+     *
      * @param Request $request
      * @return JsonResponse
      */
@@ -109,6 +113,9 @@ class CartController
      *  delete
      *
      * Remove (or decrement quantity) product from cart
+     *
+     * Params:
+     * - id    required,int   (product_id)
      *
      * @param int $id
      * @param Request $request
