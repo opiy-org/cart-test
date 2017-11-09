@@ -47,6 +47,8 @@ class CartController
         $cart_items = collect();
         foreach ($items as $product_id => $quantity) {
             $product = Product::where('id', $product_id)->first();
+            if (!$product) continue;
+
             $cart_items->push([
                 'id' => $product_id,
                 'quantity' => $quantity,
